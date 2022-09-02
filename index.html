@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Primary Meta Tags -->
+    <title>Life JS</title>
+    <meta name="title" content="Life JS">
+    <meta name="description" content="Life JS is a small simulation where life can form as cells. Play arround with the sliders and see what happens!">
+    <meta name="author" content="Gonzalo Iván Chaparro Barese">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://gonzaloivan121.github.io/isomatrix-js/">
+    <meta property="og:title" content="Life JS">
+    <meta property="og:description"
+        content="Life JS is a small simulation where life can form as cells. Play arround with the sliders and see what happens!">
+    <meta property="og:image" content="https://gonzaloivan121.github.io/isomatrix-js/assets/img/content.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://gonzaloivan121.github.io/isomatrix-js/">
+    <meta property="twitter:title" content="Life JS">
+    <meta property="twitter:description"
+        content="Life JS is a small simulation where life can form as cells. Play arround with the sliders and see what happens!">
+    <meta property="twitter:image" content="https://gonzaloivan121.github.io/isomatrix-js/assets/img/content.png">
+    
+    <link rel="stylesheet" href="./assets/css/styles.css">
+</head>
+
+<body>
+    <div id="toast"></div>
+    <!-- START CONTENT -->
+    <div class="content" id="content">
+        <div class="pannel">
+            <div class="title">Life Settings</div>
+            <div class="settings" id="life-settings">
+                <div class="setting">
+                    <span class="range-value">0</span>
+                    <input id="range" class="range" type="range" name="" value="0" min="-1" max="1" step="0.01" oninput="update_range(parseFloat(this.value))"></input>
+                </div>
+                <!-- Insert settings via script -->
+            </div>
+            <div class="buttons">
+                <button class="button box-shadow" onclick="reset_game()">Reset</button>
+            </div>
+        </div>
+        <canvas id="canvas" class="canvas" width="1200" height="628"></canvas>
+    </div>
+    <!-- START CONFIRMATION DIALBOX -->
+    <div id="confirmation-dialbox" class="confirmation-dialbox box-shadow">
+        <div class="header">
+            <div class="confirmation-close" onclick="hide_confirmation_dialbox()">X</div>
+        </div>
+        <div class="container">
+            <div class="confirmation-title" id="confirmation-title"></div>
+        </div>
+        <div class="footer">
+            <button id="confirmation-confirm" class="button box-shadow" onclick="">Yes</button>
+            <button id="confirmation-decline" class="button box-shadow" onclick="hide_confirmation_dialbox()">No</button>
+        </div>
+    </div>
+    <!-- END CONFIRMATION DIALBOX -->
+    <!-- END CONTENT -->
+
+    <!-- START IMPORTING SCRIPTS -->
+    <script src="./assets/js/toast.js"></script>
+    <script src="./assets/js/game/vector.js"></script>
+    <script src="./assets/js/game/particle.js"></script>
+    <script src="./assets/js/game/utilities.js"></script>
+    <script src="./assets/js/game/input.js"></script>
+    <script src="./assets/js/game/rule.js"></script>
+    <script src="./assets/js/game/game.js"></script>
+    <script src="./assets/js/script.js"></script>
+    <!-- END IMPORTING SCRIPTS -->
+</body>

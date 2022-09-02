@@ -1,0 +1,58 @@
+[
+    {
+        "color": "yellow",
+        "number": 600,
+        "rules": [
+            {
+                "color": "yellow",
+                "value": 0.15
+            },
+            {
+                "color": "green",
+                "value": -0.20
+            }
+        ]
+    },
+    {
+        "color": "red",
+        "number": 600,
+        "rules": [
+            {
+                "color": "red",
+                "value": -0.10
+            },
+            {
+                "color": "green",
+                "value": -0.34
+            }
+        ]
+    },
+    {
+        "color": "green",
+        "number": 600,
+        "rules": [
+            {
+                "color": "green",
+                "value": -0.32
+            },
+            {
+                "color": "red",
+                "value": -0.17
+            },
+            {
+                "color": "yellow",
+                "value": 0.34
+            }
+        ]
+    },
+    {
+        "color": "blue",
+        "number": 600,
+        "rules": []
+    },
+    {
+        "color": "white",
+        "number": 600,
+        "rules": []
+    }
+]
