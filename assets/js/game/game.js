@@ -72,7 +72,7 @@ class Game {
 
             // Game logic goes here
             if (this.particles.length > 0) {
-                this.create_life_rules();
+                this.set_life_rules();
 
                 this.particles.forEach(particle => {
                     particle.update();
@@ -89,7 +89,7 @@ class Game {
         context.fillRect(0, 0, canvas_width, canvas_height);
     }
 
-    create_life_rules() {
+    set_life_rules() {
         if (this.settings.length > 0) {
             this.settings.forEach(setting => {
                 setting.rules.forEach(rule => {
