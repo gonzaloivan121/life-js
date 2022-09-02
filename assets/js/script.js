@@ -25,6 +25,7 @@ Utilities.load_json('assets/json/settings/settings.json', (response) => {
         createToast('Se ha iniciado el juego con los ajustes recibidos', 'success');
     }
     
+    create_range_sliders(settings);
     game.start_game(settings);
 }, (error) => {
     createToast(error, 'error');
@@ -94,6 +95,46 @@ function reset_game() {
     game.random_start();
 }
 
-function update_range(value) {
-    console.log(value)
+function create_range_sliders(settings = null) {
+    if (settings === null) return;
+    if (settings.length === 0) return;
+
+    var life_settings_container = document.getElementById("life-settings");
+
+    settings.forEach(setting => {
+        var setting_template =
+        '<div class="setting">' +
+            '<span class="setting-name">' + setting.color + '</span>' +
+            '<div class="range-container">' +
+                '<span class="range-value">' + setting.amount + '</span>' +
+                '<input type="range" data-color="' + setting.color + '" data-amount="' + setting.amount + '" class="range" value="' + setting.amount +'" min="0" max="1000" step="1" oninput="update_range(this, this.value)"></input>' +
+            '</div>';
+                
+        setting.rules.forEach(rule => {
+            setting_template +=
+            '<div class="range-container">' +
+                '<span class="range-value">' + rule.value + '</span>' +
+                '<input type="range" data-color="' + setting.color + '" data-rule_color="' + rule.color + '" data-value="' + rule.value + '" class="range" value="' + rule.value + '" min="-1" max="1" step="0.01" oninput="update_range(this, this.value)"></input>' +
+            '</div>';
+        });
+                
+        setting_template += '</div>';
+        life_settings_container.insertAdjacentHTML('beforeend', setting_template);
+    });
+}
+
+function update_range(range, value) {
+    var range_value_element = range.parentNode.firstElementChild;
+    range_value_element.innerHTML = value;
+
+    var dataset = range.dataset;
+    if (dataset.amount) {
+        dataset.amount = value;
+    }
+
+    if (dataset.value) {
+        dataset.value = value;
+    }
+
+    game.update_settings(dataset);
 }

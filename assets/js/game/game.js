@@ -37,7 +37,7 @@ class Game {
         if (settings !== null) {
             this.settings = settings;
             settings.forEach(setting => {
-                this[setting.color] = this.create_particles(setting.number, setting.color);
+                this[setting.color] = this.create_particles(setting.amount, setting.color);
             });
         }
 
@@ -46,10 +46,10 @@ class Game {
         }
     }
 
-    create_particles(number, color) {
+    create_particles(amount, color) {
         var group = [];
 
-        for (let i = 0; i < number; i++) {
+        for (let i = 0; i < amount; i++) {
             var particle = this.create_particle(color);
             group.push(particle);
             this.particles.push(particle);
@@ -96,6 +96,50 @@ class Game {
                     Rule.set(this[setting.color], this[rule.color], rule.value);
                 });
             });
+        }
+    }
+
+    update_settings(data) {
+        this.settings.forEach(setting => {
+            if (setting.color === data.color) {
+                if (data.rule_color === undefined) {
+                    setting.amount = parseInt(data.amount);
+                    this.update_particle_amount(setting.color, setting.amount);
+                } else {
+                    setting.rules.forEach(rule => {
+                        if (rule.color === data.rule_color) {
+                            rule.value = data.value;
+                        }
+                    })
+                }
+            }
+        });
+    }
+
+    update_particle_amount(color, amount) {
+        var color_difference = this[color].length - amount;
+        var particle_difference = this.particles.length - amount;
+
+        if (color_difference > 0) {
+            this[color].splice(0, color_difference);
+
+            var count = 0;
+            for (let i = 0; i < this.particles.length; i++) {
+                if (this.particles[i].color === color) {
+                    if (count < color_difference) {
+                        this.particles.splice(i, 1);
+                    }
+                    count++;
+
+                    if (count >= color_difference) {
+                        return;
+                    }
+                }
+            }
+        }
+
+        if (particle_difference < 0) {
+            this[color] = this.create_particles(-particle_difference, color);
         }
     }
 }
