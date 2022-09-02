@@ -95,6 +95,56 @@ function reset_game() {
     game.random_start();
 }
 
+function show_save_confirmation() {
+    show_confirmation_dialbox(
+        'Do you want to save these settings?',
+        'Yes, save them!',
+        'No, I don\'t think I will...',
+        () => {
+            save_settings();
+        },
+        () => {
+            createToast('Settings not saved', TOAST_TYPE.WARNING);
+        }
+        )
+    }
+    
+function save_settings() {
+    var colors = [];
+    game.settings.forEach(setting => {
+        colors.push(setting.color);
+    });
+
+    var data = {
+        settings: game.settings,
+        particles: game.particles,
+        colors: {}
+    }
+    
+    colors.forEach(color => {
+        data.colors[color] = game[color];
+    });
+    
+    if (Utilities.download_json(data)) {
+        createToast('Settings saved!', TOAST_TYPE.SUCCESS);
+    } else {
+        createToast('Settings not saved', TOAST_TYPE.WARNING);
+    }
+}
+
+function load_settings(url = null) {
+    Utilities.load_json('assets/json/saves/1662137121508.json', (response) => {
+        var data;
+        try {
+            data = JSON.parse(response);
+        } catch (error) {
+            createToast('There has been an error loading these settings', TOAST_TYPE.WARNING);
+        }
+    
+        game.load_all_settings(data);
+    });
+}
+
 function create_range_sliders(settings = null) {
     if (settings === null) return;
     if (settings.length === 0) return;

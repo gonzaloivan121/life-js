@@ -34,7 +34,7 @@ class Utilities {
      * @param {Function} callback - The function to be called once the JSON is loaded
      * @param {Function} callback_error - The function to be called if the load fails
      */
-    static load_json(path = null, callback, callback_error = () => {}) {
+    static load_json(path = null, callback = () => {}, callback_error = () => {}) {
         if (path === null) return;
 
         var xobj = new XMLHttpRequest();
@@ -50,6 +50,31 @@ class Utilities {
             callback_error("Ha ocurrido un error.");
         }
         xobj.send(null);
+    }
+
+    /**
+     * Downloads a JSON file with a given name.
+     * 
+     * @param {object} data - The data that will be saved
+     * @param {String} filename - The name of the file
+     */
+     static download_json(data = null, filename = Date.now()) {
+        if (data === null) return false;
+
+        try {
+            data = JSON.stringify(data);
+        } catch (error) {
+            createToast('There has been an error saving the settings', TOAST_TYPE.ERROR);
+            return false;
+        }
+
+        var link = document.createElement("a");
+        var file = new Blob([data], {type: 'application/json'});
+        link.href = URL.createObjectURL(file);
+        link.download = filename + '.json';
+        link.click();
+
+        return true;
     }
 
     /**

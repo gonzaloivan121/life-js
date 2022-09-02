@@ -142,4 +142,8 @@ class Game {
             this[color] = this.create_particles(-particle_difference, color);
         }
     }
+
+    load_all_settings(data) {
+        console.log(data)
+    }
 }
