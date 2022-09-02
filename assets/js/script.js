@@ -91,7 +91,7 @@ async function task(action = () => { }) {
 function timer(ms) { return new Promise(res => setTimeout(res, ms)); }
 
 function reset_game() {
-    game.reset();
+    game.random_start();
 }
 
 function update_range(value) {

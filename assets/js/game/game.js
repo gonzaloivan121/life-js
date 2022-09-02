@@ -18,6 +18,16 @@ class Game {
         this.start_interval(this.Interval);
     }
 
+    random_start() {
+        this.particles.forEach(particle => {
+            const position = new Vector(
+                Utilities.random(50, canvas_width - 50),
+                Utilities.random(50, canvas_height - 50)
+            );
+            particle.position = position;
+        });
+    }
+
     update_ticks(ticks) {
         this.ticks = ticks;
         this.update_interval();
