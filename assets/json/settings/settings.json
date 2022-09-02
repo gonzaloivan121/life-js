@@ -1,7 +1,7 @@
 [
     {
         "color": "yellow",
-        "number": 600,
+        "amount": 600,
         "rules": [
             {
                 "color": "yellow",
@@ -15,7 +15,7 @@
     },
     {
         "color": "red",
-        "number": 600,
+        "amount": 600,
         "rules": [
             {
                 "color": "red",
@@ -29,7 +29,7 @@
     },
     {
         "color": "green",
-        "number": 600,
+        "amount": 600,
         "rules": [
             {
                 "color": "green",
@@ -47,12 +47,12 @@
     },
     {
         "color": "blue",
-        "number": 600,
+        "amount": 600,
         "rules": []
     },
     {
         "color": "white",
-        "number": 600,
+        "amount": 600,
         "rules": []
     }
 ]
