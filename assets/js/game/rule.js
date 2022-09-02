@@ -1,5 +1,7 @@
 class Rule {
     static set(particles1, particles2, gravity) {
+        if (particles1.length === 0 || particles2.length === 0) return;
+
         for (let i = 0; i < particles1.length; i++) {
             var force = new Vector(0, 0);
 
