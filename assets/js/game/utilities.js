@@ -97,4 +97,15 @@ class Utilities {
 
         return 'production';
     }
+
+    /**
+     * Returns the capitalized string inputed
+     * 
+     * @param {String} string - The inout string to be capitalized
+     * @returns {String} The capitalized string
+     */
+    static capitalize(string) {
+        string = string.toLocaleLowerCase();
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
 }
