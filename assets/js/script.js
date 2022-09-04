@@ -105,6 +105,7 @@ function show_save_confirmation() {
         },
         () => {
             createToast('Settings not saved', TOAST_TYPE.WARNING);
+            hide_confirmation_dialbox();
         }
         )
     }
@@ -117,13 +118,8 @@ function save_settings() {
 
     var data = {
         settings: game.settings,
-        particles: game.particles,
-        colors: {}
+        particles: game.particles
     }
-    
-    colors.forEach(color => {
-        data.colors[color] = game[color];
-    });
     
     if (Utilities.download_json(data)) {
         createToast('Settings saved!', TOAST_TYPE.SUCCESS);
@@ -132,8 +128,14 @@ function save_settings() {
     }
 }
 
+function test_load() {
+    load_settings('assets/json/saves/1662252386989.json');
+}
+
 function load_settings(url = null) {
-    Utilities.load_json('assets/json/saves/1662137121508.json', (response) => {
+    if (url === null) return;
+
+    Utilities.load_json(url, (response) => {
         var data;
         try {
             data = JSON.parse(response);
@@ -142,7 +144,14 @@ function load_settings(url = null) {
         }
     
         game.load_all_settings(data);
+        regenerate_range_sliders();
     });
+}
+
+function regenerate_range_sliders() {
+    var life_settings_container = document.getElementById("life-settings");
+    life_settings_container.textContent = '';
+    create_range_sliders(game.settings);
 }
 
 function create_range_sliders(settings = null) {
@@ -153,24 +162,42 @@ function create_range_sliders(settings = null) {
 
     settings.forEach(setting => {
         var setting_template =
-        '<div class="setting">' +
-            '<span class="setting-name">' + setting.color + '</span>' +
-            '<div class="range-container">' +
-                '<span class="range-value">' + setting.amount + '</span>' +
-                '<input type="range" data-color="' + setting.color + '" data-amount="' + setting.amount + '" class="range" value="' + setting.amount +'" min="0" max="1000" step="1" oninput="update_range(this, this.value)"></input>' +
-            '</div>';
+        '<div class="setting" id="' + setting.color + '-setting">' +
+            '<span class="setting-name">' + setting.color + '</span>';
+        
+        setting_template += create_amount_range_template(setting.color, setting.amount);
                 
         setting.rules.forEach(rule => {
-            setting_template +=
-            '<div class="range-container">' +
-                '<span class="range-value">' + rule.value + '</span>' +
-                '<input type="range" data-color="' + setting.color + '" data-rule_color="' + rule.color + '" data-value="' + rule.value + '" class="range" value="' + rule.value + '" min="-1" max="1" step="0.01" oninput="update_range(this, this.value)"></input>' +
-            '</div>';
+            setting_template += create_rule_range_template(setting.color, rule);
         });
-                
+
+        setting_template += create_add_rule_button(setting.color);  
         setting_template += '</div>';
+
         life_settings_container.insertAdjacentHTML('beforeend', setting_template);
     });
+}
+
+function create_amount_range_template(color, amount) {
+    return '<div class="range-container tooltip">' +
+        '<span class="range-value">' + amount + '</span>' +
+        '<span class="tooltip-text">Amount of <strong style="color: ' + color + ';">' + color + '</strong> particles</span>' +
+        '<input type="range" data-color="' + color + '" data-amount="' + amount + '" class="range" value="' + amount +'" min="0" max="1000" step="1" oninput="update_range(this, this.value)"></input>' +
+    '</div>';
+}
+
+function create_rule_range_template(color, rule) {
+    return '<div class="range-container tooltip">' +
+        '<span class="range-value">' + rule.value + '</span>' +
+        '<span class="tooltip-text">How much <strong style="color: ' + color + ';">' + color + '</strong> particles attract to <strong style="color: ' + rule.color + ';">' + rule.color + '</strong> particles</span>' +
+        '<input type="range" data-color="' + color + '" data-rule_color="' + rule.color + '" data-value="' + rule.value + '" class="range" value="' + rule.value + '" min="-1" max="1" step="0.01" oninput="update_range(this, this.value)"></input>' +
+    '</div>';
+}
+
+function create_add_rule_button(color) {
+    return '<div class="range-container" id="add-' + color + '-rule">' +
+        '<div><button class="button" onclick="add_select_rule(\'' + color + '\')">+</button></div>' +
+    '</div>';
 }
 
 function update_range(range, value) {
@@ -187,4 +214,53 @@ function update_range(range, value) {
     }
 
     game.update_settings(dataset);
+}
+
+function add_select_rule(color) {
+    var color_setting = document.getElementById(color + "-setting");
+    var add_rule_button = document.getElementById("add-" + color + "-rule");
+
+    var select_template =
+    '<div class="range-container select" id="select-' + color + '-rule">' +
+        '<select class="custom-select" onchange="add_rule(\'' + color + '\', this.value)">' +
+            '<option hidden selected>Select an option</option>';
+    
+    var added_colors = [];
+
+    game.settings.forEach(setting => {
+        if (setting.color === color) {
+            setting.rules.forEach(rule => {
+                added_colors.push(rule.color);
+            });
+        }
+    });
+
+    game.colors.forEach((game_color) => {
+        if (!added_colors.includes(game_color)) {
+            select_template += '<option value="' + game_color + '">' + game_color + '</option>';
+        }
+    });
+
+    select_template +=
+        '</select>' +
+    '</div>';
+
+    add_rule_button.remove();
+
+    color_setting.insertAdjacentHTML('beforeend', select_template);
+    color_setting.insertAdjacentHTML('beforeend', create_add_rule_button(color));
+}
+
+function add_rule(color, rule_color) {
+    var color_setting = document.getElementById(color + "-setting");
+    var select_color_rule = document.getElementById("select-" + color + "-rule");
+    var add_rule_button = document.getElementById("add-" + color + "-rule");
+
+    var new_rule = game.add_new_rule(color, rule_color);
+    
+    select_color_rule.remove();
+    add_rule_button.remove();
+
+    color_setting.insertAdjacentHTML('beforeend', create_rule_range_template(color, new_rule));
+    color_setting.insertAdjacentHTML('beforeend', create_add_rule_button(color));
 }

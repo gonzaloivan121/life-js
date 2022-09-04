@@ -1,6 +1,7 @@
 class Game {
     particles = [];
     settings = [];
+    colors = [];
 
     constructor(ticks) {
         this.ticks = ticks;
@@ -48,6 +49,7 @@ class Game {
 
     create_particles(amount, color) {
         var group = [];
+        this.colors.push(color);
 
         for (let i = 0; i < amount; i++) {
             var particle = this.create_particle(color);
@@ -59,11 +61,10 @@ class Game {
     }
 
     create_particle(color) {
-        const position = new Vector(
+        return new Particle(new Vector(
             Utilities.random(50, canvas_width - 50),
             Utilities.random(50, canvas_height - 50)
-        );
-        return new Particle(position, color);
+        ), color);
     }
 
     start_interval(time) {
@@ -144,6 +145,37 @@ class Game {
     }
 
     load_all_settings(data) {
-        console.log(data)
+        this.settings = data.settings;
+        this.particles = [];
+        var colors = [];
+
+        data.particles.forEach(particle => {
+            this.particles.push(Particle.create_from(particle));
+            if (!colors.includes(particle.color)) {
+                colors.push(particle.color);
+            }
+        });
+
+        colors.forEach(color => {
+            this[color] = [];
+            this.particles.forEach(particle => {
+                if (particle.color === color) {
+                    this[color].push(particle);
+                }
+            });
+        });
+    }
+
+    add_new_rule(color, rule_color) {
+        var new_rule = {
+            color: rule_color,
+            value: 0
+        };
+        this.settings.forEach((setting) => {
+            if (setting.color === color) {
+                setting.rules.push(new_rule);
+            }
+        });
+        return new_rule;
     }
 }

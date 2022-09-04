@@ -45,4 +45,13 @@ class Particle {
             this.velocity.y *= -1;
         }
     }
+
+    static create_from(particle) {
+        var new_position = new Vector(particle.position.x, particle.position.y);
+        var new_velocity = new Vector(particle.velocity.x, particle.velocity.y);
+        var new_particle = new Particle(new_position, particle.color, particle.scale);
+        new_particle.is_alive = particle.is_alive;
+        new_particle.velocity = new_velocity;
+        return new_particle;
+    }
 }

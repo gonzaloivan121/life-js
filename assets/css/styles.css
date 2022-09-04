@@ -1,3 +1,9 @@
+:root {
+    --select-border: #777;
+    --select-focus: blue;
+    --select-arrow: var(--select-border);
+}
+
 html, body {
     margin: 0;
 }
@@ -58,6 +64,11 @@ ul, ol {
     font-size: 1.25em;
 }
 
+.pannel .settings {
+    overflow-y: auto;
+    height: 80%;
+}
+
 .pannel .setting {
     display: flex;
     flex-direction: column;
@@ -73,6 +84,7 @@ ul, ol {
 .pannel .setting .range-container {
     display: flex;
     align-items: center;
+    justify-content: center;
     padding: 5px 0px;
 }
 
@@ -100,6 +112,20 @@ ul, ol {
     border-left: 7px solid #2c3e50;
     border-bottom: 7px solid transparent;
     content: '';
+}
+
+.pannel .setting .range-container.select {
+    border: 1px solid var(--select-border);
+    border-radius: 0.25em;
+    padding: 5px 10px;
+    cursor: pointer;
+    background-color: #fff;
+    background-image: linear-gradient(to top, #f9f9f9, #fff 33%);
+    margin: 5px 0;
+}
+
+.pannel .setting .range-container.select:focus {
+    border: 1px solid var(--select-focus);
 }
 
 .range {
@@ -131,6 +157,65 @@ ul, ol {
 
 .range::-webkit-slider-thumb:active {
     border: 5px solid #333;
+}
+
+.custom-select {
+    /*appearance: none;*/
+    background-color: transparent;
+    border: none;
+    padding: 0 1em 0 0;
+    margin: 0;
+    width: 100%;
+    font-family: inherit;
+    font-size: inherit;
+    cursor: inherit;
+    line-height: inherit;
+    outline: none;
+    position: relative;
+}
+
+.custom-select::-ms-expand {
+    display: none;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltip-text {
+    visibility: hidden;
+    max-width: 200px;
+    background-color: #555555fa;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 1;
+    bottom: calc(125% - 5px);
+    /* left: calc(50% - 30px); */
+    /* margin-left: -60px; */
+    opacity: 0;
+    transition: opacity .2s ease-in-out;
+}
+
+/* Tooltip arrow */
+.tooltip .tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
 }
 
 .buttons {
@@ -295,6 +380,27 @@ ul, ol {
     background-color: #ffc107;
 }
 /* TOAST */
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background-color: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background-color: #555; 
+}
+/* Scrollbar */
 
 @media only screen and (max-width: 768px) {
     body {
