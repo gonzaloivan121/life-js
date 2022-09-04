@@ -237,9 +237,11 @@ function add_select_rule(color) {
 
     game.colors.forEach((game_color) => {
         if (!added_colors.includes(game_color)) {
-            select_template += '<option value="' + game_color + '">' + game_color + '</option>';
+            select_template += '<option value="' + game_color + '">' + Utilities.capitalize(game_color) + '</option>';
         }
     });
+
+    select_template += '<option value="">Cancel</option>';
 
     select_template +=
         '</select>' +
@@ -252,8 +254,14 @@ function add_select_rule(color) {
 }
 
 function add_rule(color, rule_color) {
-    var color_setting = document.getElementById(color + "-setting");
     var select_color_rule = document.getElementById("select-" + color + "-rule");
+
+    if (rule_color === '') {
+        select_color_rule.remove();
+        return;
+    }
+
+    var color_setting = document.getElementById(color + "-setting");
     var add_rule_button = document.getElementById("add-" + color + "-rule");
 
     var new_rule = game.add_new_rule(color, rule_color);
