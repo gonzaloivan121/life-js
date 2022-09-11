@@ -197,7 +197,7 @@ function create_attraction_range_template(color, range) {
     return '<div class="range-container tooltip">' +
         '<span class="range-value">' + range + '</span>' +
         '<span class="tooltip-text">Range of attraction for <strong style="color: ' + color + ';">' + color + '</strong> particles</span>' +
-        '<input type="range" data-color="' + color + '" data-range="' + range + '" class="range" value="' + range + '" min="0" max="100" step="1" oninput="update_range(this, this.value)"></input>' +
+        '<input type="range" data-color="' + color + '" data-range="' + range + '" class="range" value="' + range + '" min="0" max="100" step="1" oninput="update_range(this, this.value, \'range\')"></input>' +
     '</div>';
 }
 
@@ -205,7 +205,7 @@ function create_amount_range_template(color, amount) {
     return '<div class="range-container tooltip">' +
         '<span class="range-value">' + amount + '</span>' +
         '<span class="tooltip-text">Amount of <strong style="color: ' + color + ';">' + color + '</strong> particles</span>' +
-        '<input type="range" data-color="' + color + '" data-amount="' + amount + '" class="range" value="' + amount +'" min="0" max="1000" step="1" oninput="update_range(this, this.value)"></input>' +
+        '<input type="range" data-color="' + color + '" data-amount="' + amount + '" class="range" value="' + amount +'" min="0" max="1000" step="1" oninput="update_range(this, this.value, \'amount\')"></input>' +
     '</div>';
 }
 
@@ -213,7 +213,7 @@ function create_rule_range_template(color, rule) {
     return '<div class="range-container tooltip">' +
         '<span class="range-value">' + rule.value + '</span>' +
         '<span class="tooltip-text">How much <strong style="color: ' + color + ';">' + color + '</strong> particles attract to <strong style="color: ' + rule.color + ';">' + rule.color + '</strong> particles</span>' +
-        '<input type="range" data-color="' + color + '" data-rule_color="' + rule.color + '" data-value="' + rule.value + '" class="range" value="' + rule.value + '" min="-1" max="1" step="0.01" oninput="update_range(this, this.value)"></input>' +
+        '<input type="range" data-color="' + color + '" data-rule_color="' + rule.color + '" data-value="' + rule.value + '" class="range" value="' + rule.value + '" min="-1" max="1" step="0.01" oninput="update_range(this, this.value, \'attraction\')"></input>' +
     '</div>';
 }
 
@@ -223,11 +223,11 @@ function create_add_rule_button(color) {
     '</div>';
 }
 
-function update_range(range, value) {
-    var range_value_element = range.parentNode.firstElementChild;
+function update_range(range_element, value, type) {
+    var range_value_element = range_element.parentNode.firstElementChild;
     range_value_element.innerHTML = value;
 
-    var dataset = range.dataset;
+    var dataset = range_element.dataset;
     if (dataset.amount) {
         dataset.amount = value;
     }
@@ -240,7 +240,7 @@ function update_range(range, value) {
         dataset.range = value;
     }
 
-    game.update_settings(dataset);
+    game.update_settings(dataset, type);
 }
 
 function add_select_rule(color) {

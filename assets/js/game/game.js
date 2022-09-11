@@ -94,59 +94,88 @@ class Game {
         if (this.settings.length > 0) {
             this.settings.forEach(setting => {
                 setting.rules.forEach(rule => {
-                    Rule.set(this[setting.color], this[rule.color], rule.value);
+                    Rule.set(this[setting.color], this[rule.color], rule.value, setting.range);
                 });
             });
         }
     }
 
-    update_settings(data) {
+    update_settings(data, type) {
         this.settings.forEach(setting => {
             if (setting.color === data.color) {
-                if (data.rule_color === undefined) {
-                    setting.amount = parseInt(data.amount);
-                    this.update_particle_amount(setting.color, setting.amount);
-                } else {
-                    console.log(data.range)
-                    if (data.range === undefined) {
-                        setting.rules.forEach(rule => {
-                            if (rule.color === data.rule_color) {
-                                rule.value = data.value;
-                            }
-                        });
-                    } else {
-                        console.log(data.range)
-                    }
+                switch (type) {
+                    case 'amount':
+                        this.update_particle_amount(setting, data);
+                        break;
+                    case 'range':
+                        this.update_particle_range(setting, data);
+                        break;
+                    case 'attraction':
+                        this.update_particle_attraction(setting, data);
+                        break;
+                    default:
+                        return;
                 }
             }
         });
     }
 
-    update_particle_amount(color, amount) {
-        var color_difference = this[color].length - amount;
-        var particle_difference = this.particles.length - amount;
+    /**
+     * 
+     * @param {Object} setting 
+     * @param {{amount: number, color: string}} data 
+     */
+    update_particle_amount(setting, data) {
+        const amount = parseInt(data.amount);
+        const color = setting.color;
+        const color_difference = this[color].length - amount;
 
         if (color_difference > 0) {
+            // Remove particles
             this[color].splice(0, color_difference);
 
             var count = 0;
-            for (let i = 0; i < this.particles.length; i++) {
-                if (this.particles[i].color === color) {
-                    if (count < color_difference) {
-                        this.particles.splice(i, 1);
-                    }
-                    count++;
 
-                    if (count >= color_difference) {
+            for (let i = 0; i < this.particles.length; i++) {
+                var particle = this.particles[i];
+                if (particle.color === color) {
+                    this.particles.splice(i, 1);
+
+                    if (count === color_difference) {
                         return;
                     }
+
+                    count++;
                 }
             }
+        } else {
+            // Add particles
+            //this[color] = this.create_particles(-color_difference, color);
         }
+    }
 
-        if (particle_difference < 0) {
-            this[color] = this.create_particles(-particle_difference, color);
-        }
+    /**
+     * 
+     * @param {Object} setting 
+     * @param {{range: number, color: string}} data 
+     */
+    update_particle_range(setting, data) {
+        const range = parseInt(data.range);
+        setting.range = range;
+    }
+
+    /**
+     * 
+     * @param {Object} setting 
+     * @param {{color: string, rule_color: string, value: number}} data 
+     */
+    update_particle_attraction(setting, data) {
+        const attraction = parseFloat(data.value);
+        setting.rules.forEach(rule => {
+            if (rule.color === data.rule_color) {
+                rule.value = attraction;
+            }
+        });
     }
 
     load_all_settings(data) {

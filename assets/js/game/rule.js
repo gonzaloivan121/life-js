@@ -1,5 +1,5 @@
 class Rule {
-    static set(particles1, particles2, gravity) {
+    static set(particles1, particles2, gravity, range) {
         if (particles1.length === 0 || particles2.length === 0) return;
 
         for (let i = 0; i < particles1.length; i++) {
@@ -19,7 +19,7 @@ class Rule {
                     delta.y * delta.y
                 )
 
-                if (distance > 0 && distance < 80) {
+                if (distance > 0 && distance < range) {
                     const F = gravity * 1 / distance;
 
                     const new_force = new Vector(
