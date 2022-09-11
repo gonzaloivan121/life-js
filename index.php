@@ -32,8 +32,11 @@
     <div id="toast"></div>
     <!-- START CONTENT -->
     <div class="content" id="content">
+        <div class="menu-button-container" onclick="toogle_pannel()">
+            <div class="menu-button"></div>
+        </div>
         <!-- START PANNEL -->
-        <div class="pannel">
+        <div class="pannel" id="pannel">
             <div class="title">Life Settings</div>
             <div class="settings" id="life-settings">
                 <!-- Insert settings via script -->
@@ -41,6 +44,7 @@
             <div class="buttons">
                 <button class="button box-shadow" onclick="reset_game()">Reset</button>
                 <button class="button box-shadow" onclick="show_save_confirmation()">Save Settings</button>
+                <button class="button box-shadow" onclick="show_upload_modal()">Load Settings</button>
             </div>
         </div>
         <!-- END PANNEL -->
@@ -63,6 +67,16 @@
         </div>
     </div>
     <!-- END CONFIRMATION DIALBOX -->
+    <!-- START UPLOAD MODAL -->
+    <div id="upload-modal" class="upload-modal box-shadow">
+        <div class="header">
+            <div class="modal-close" onclick="hide_upload_modal()">X</div>
+        </div>
+        <div class="container">
+            <input type="file" id="file_upload" accept="application/json" onchange="upload_settings(this)">
+        </div>
+    </div>
+    <!-- END UPLOAD MODAL -->
 
     <!-- START IMPORTING SCRIPTS -->
     <script src="./assets/js/toast.js"></script>
