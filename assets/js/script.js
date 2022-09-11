@@ -116,13 +116,14 @@ function show_save_confirmation() {
         'No, I don\'t think I will...',
         () => {
             save_settings();
+            hide_confirmation_dialbox();
         },
         () => {
             createToast('Settings not saved', TOAST_TYPE.WARNING);
             hide_confirmation_dialbox();
         }
-        )
-    }
+    );
+}
     
 function save_settings() {
     var colors = [];
@@ -146,8 +147,21 @@ function test_load() {
     load_settings('assets/json/saves/1662252386989.json');
 }
 
-function load_settings(url = null) {
-    if (url === null) return;
+function load_settings(url = null, json = null) {
+    var result = { success: false, message: null };
+    if (url === null) {
+        if (json === null) return;
+        result.success = game.load_all_settings(json);
+        
+        if (result.success) {
+            createToast('Settings loaded succesfully', TOAST_TYPE.SUCCESS);
+            regenerate_range_sliders();
+        } else {
+            createToast('There has been an error loading these settings', TOAST_TYPE.WARNING);
+        }
+
+        hide_upload_modal();
+    }
 
     Utilities.load_json(url, (response) => {
         var data;
@@ -321,10 +335,10 @@ function upload_settings(element) {
             try {
                 data = JSON.parse(response);
             } catch (error) {
-                createToast('Ha habido un error cargando el fichero subido', TOAST_TYPE.ERROR);
+                createToast('File is not in JSON format', TOAST_TYPE.ERROR);
             }
 
-            console.log(data)
+            load_settings(null, data);
         })
     }
 }

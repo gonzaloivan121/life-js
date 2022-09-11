@@ -178,7 +178,9 @@ class Game {
         });
     }
 
-    load_all_settings(data) {
+    load_all_settings(data = null) {
+        if (data === null) return false;
+
         this.settings = data.settings;
         this.particles = [];
         var colors = [];
@@ -198,6 +200,8 @@ class Game {
                 }
             });
         });
+
+        return true;
     }
 
     add_new_rule(color, rule_color) {
