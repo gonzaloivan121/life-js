@@ -58,7 +58,7 @@ class Utilities {
      * @param {object} data - The data that will be saved
      * @param {String} filename - The name of the file
      */
-     static download_json(data = null, filename = Date.now()) {
+    static download_json(data = null, filename = Date.now()) {
         if (data === null) return false;
 
         try {
@@ -75,6 +75,20 @@ class Utilities {
         link.click();
 
         return true;
+    }
+
+    /**
+     * Uploads a JSON file.
+     * 
+     * @param {object} data - The data that will be saved
+     * @param {String} filename - The name of the file
+     */
+    static upload_json(file = null, callback = () => {}) {
+        if (file === null) return;
+
+        file.text().then((res) => {
+            callback(res);
+        })
     }
 
     /**
