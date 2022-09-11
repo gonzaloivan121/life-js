@@ -84,6 +84,20 @@ function hide_confirmation_dialbox() {
     }, 500);
 }
 
+function show_upload_modal() {
+    var upload_modal = document.getElementById("upload-modal");
+    var content = document.getElementById("content");
+    upload_modal.classList.add("active");
+    content.classList.add("blur");
+}
+
+function hide_upload_modal() {
+    var upload_modal = document.getElementById("upload-modal");
+    var content = document.getElementById("content");
+    upload_modal.classList.remove("active");
+    content.classList.remove("blur");
+}
+
 async function task(action = () => { }) {
     await timer(0);
     action();
@@ -164,8 +178,9 @@ function create_range_sliders(settings = null) {
         var setting_template =
         '<div class="setting" id="' + setting.color + '-setting">' +
             '<span class="setting-name">' + setting.color + '</span>';
-        
-        setting_template += create_amount_range_template(setting.color, setting.amount);
+
+            setting_template += create_amount_range_template(setting.color, setting.amount);
+            setting_template += create_attraction_range_template(setting.color, setting.range);
                 
         setting.rules.forEach(rule => {
             setting_template += create_rule_range_template(setting.color, rule);
@@ -176,6 +191,14 @@ function create_range_sliders(settings = null) {
 
         life_settings_container.insertAdjacentHTML('beforeend', setting_template);
     });
+}
+
+function create_attraction_range_template(color, range) {
+    return '<div class="range-container tooltip">' +
+        '<span class="range-value">' + range + '</span>' +
+        '<span class="tooltip-text">Range of attraction for <strong style="color: ' + color + ';">' + color + '</strong> particles</span>' +
+        '<input type="range" data-color="' + color + '" data-range="' + range + '" class="range" value="' + range + '" min="0" max="100" step="1" oninput="update_range(this, this.value)"></input>' +
+    '</div>';
 }
 
 function create_amount_range_template(color, amount) {
@@ -211,6 +234,10 @@ function update_range(range, value) {
 
     if (dataset.value) {
         dataset.value = value;
+    }
+
+    if (dataset.range) {
+        dataset.range = value;
     }
 
     game.update_settings(dataset);
@@ -269,6 +296,44 @@ function add_rule(color, rule_color) {
     select_color_rule.remove();
     add_rule_button.remove();
 
+    var added_colors = [];
+
+    game.settings.forEach(setting => {
+        if (setting.color === color) {
+            setting.rules.forEach(rule => {
+                added_colors.push(rule.color);
+            });
+        }
+    });
+
     color_setting.insertAdjacentHTML('beforeend', create_rule_range_template(color, new_rule));
-    color_setting.insertAdjacentHTML('beforeend', create_add_rule_button(color));
+
+    if (added_colors.length !== game.colors.length) {
+        color_setting.insertAdjacentHTML('beforeend', create_add_rule_button(color));
+    }
+}
+
+function upload_settings(element) {
+    if (element.files.length > 0) {
+        Utilities.upload_json(element.files[0], (response) => {
+            var data;
+
+            try {
+                data = JSON.parse(response);
+            } catch (error) {
+                createToast('Ha habido un error cargando el fichero subido', TOAST_TYPE.ERROR);
+            }
+
+            console.log(data)
+        })
+    }
+}
+
+function toogle_pannel() {
+    var pannel = document.getElementById("pannel");
+    if (pannel.classList.contains("active")) {
+        pannel.classList.remove("active");
+    } else {
+        pannel.classList.add("active");
+    }
 }
