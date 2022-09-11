@@ -107,11 +107,16 @@ class Game {
                     setting.amount = parseInt(data.amount);
                     this.update_particle_amount(setting.color, setting.amount);
                 } else {
-                    setting.rules.forEach(rule => {
-                        if (rule.color === data.rule_color) {
-                            rule.value = data.value;
-                        }
-                    })
+                    console.log(data.range)
+                    if (data.range === undefined) {
+                        setting.rules.forEach(rule => {
+                            if (rule.color === data.rule_color) {
+                                rule.value = data.value;
+                            }
+                        });
+                    } else {
+                        console.log(data.range)
+                    }
                 }
             }
         });
