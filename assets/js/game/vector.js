@@ -73,4 +73,16 @@ class Vector {
         this.x /= v.x;
         this.y /= v.y;
     }
+
+    magnitude() {
+        return Math.sqrt(
+            this.x * this.x +
+            this.y * this.y
+        );
+    }
+
+    normalized() {
+        var magnitude = this.magnitude();
+        return new Vector(this.x / magnitude, this.y / magnitude);
+    }
 }
