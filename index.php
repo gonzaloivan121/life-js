@@ -35,6 +35,9 @@
         <div class="menu-button-container" onclick="toogle_pannel()">
             <div class="menu-button"></div>
         </div>
+        <div class="menu-info-container" onclick="show_info_modal()">
+            <img src="assets/svg/icons/info.svg" height="30" width="30">
+        </div>
         <!-- START PANNEL -->
         <div class="pannel" id="pannel">
             <div class="title">Life Settings</div>
@@ -77,6 +80,19 @@
         </div>
     </div>
     <!-- END UPLOAD MODAL -->
+    <!-- START INFO MODAL -->
+    <div id="info-modal" class="info-modal box-shadow">
+        <div class="header">
+            <div class="modal-close" onclick="hide_info_modal()">X</div>
+        </div>
+        <div class="container">
+            <p style="text-align: center;" id="info-description"></p>
+        </div>
+        <div class="footer" id="info-buttons">
+            <!-- Insert buttons via script -->
+        </div>
+    </div>
+    <!-- END INFO MODAL -->
 
     <!-- START IMPORTING SCRIPTS -->
     <script src="./assets/js/toast.js"></script>

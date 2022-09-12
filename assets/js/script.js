@@ -12,24 +12,84 @@ window.addEventListener("resize", resize);
 
 var game = new Game(60);
 
+Utilities.load_json('assets/json/info/info.json', (response) => {
+    var info = null;
+
+    try {
+        info = JSON.parse(response);
+    } catch (error) {
+        createToast('No se ha podido obtener la información sobre las redes sociales', 'error');
+    }
+
+    if (info !== null) {
+        generate_info_modal(info);
+    }
+}, (error) => {
+    createToast(error, TOAST_TYPE.ERROR);
+});
+
 Utilities.load_json('assets/json/settings/settings.json', (response) => {
     var settings = null;
 
     try {
         settings = JSON.parse(response);
     } catch (error) {
-        createToast('No se han podido obtener los ajustes del juego', 'error');
+        createToast('No se han podido obtener los ajustes del juego', TOAST_TYPE.ERROR);
     }
     
     if (settings !== null) {
-        createToast('Se ha iniciado el juego con los ajustes recibidos', 'success');
+        create_range_sliders(settings);
+        game.start_game(settings);
+        createToast('Se ha iniciado el juego con los ajustes recibidos', TOAST_TYPE.SUCCESS);
     }
-    
-    create_range_sliders(settings);
-    game.start_game(settings);
 }, (error) => {
-    createToast(error, 'error');
+    createToast(error, TOAST_TYPE.ERROR);
 });
+
+/**
+ * 
+ * @param {{description: string, socials: [{name: string, icon: string, url: string}]}} info 
+ * @returns 
+ */
+function generate_info_modal(info = null) {
+    if (info === null) return;
+
+    var info_description_element = document.getElementById("info-description");
+    var info_buttons_element = document.getElementById("info-buttons");
+
+    info_description_element.innerText = info.description;
+
+    info.socials.forEach(social => {
+        const button = document.createElement('button');
+        const img = document.createElement('img');
+
+        img.src = social.icon;
+        img.height = "25";
+
+        button.classList.add('button');
+        button.classList.add('box-shadow');
+
+        if (social.url) {
+            button.onclick = () => {
+                window.open(social.url, '_blank').focus();
+            }
+        } else {
+            const share_data = {
+                title: 'Life JS',
+                text: social.share_text,
+                url: window.location.href
+            };
+            button.onclick = () => {
+                navigator.share(share_data);
+            }
+        }
+
+        button.innerText = social.name;
+        button.prepend(img);
+
+        info_buttons_element.appendChild(button);
+    });
+}
 
 canvas.onmousemove = function (e) {
     var rect = this.getBoundingClientRect(),
@@ -98,6 +158,20 @@ function hide_upload_modal() {
     content.classList.remove("blur");
 }
 
+function show_info_modal() {
+    var info_modal = document.getElementById("info-modal");
+    var content = document.getElementById("content");
+    info_modal.classList.add("active");
+    content.classList.add("blur");
+}
+
+function hide_info_modal() {
+    var info_modal = document.getElementById("info-modal");
+    var content = document.getElementById("content");
+    info_modal.classList.remove("active");
+    content.classList.remove("blur");
+}
+
 async function task(action = () => { }) {
     await timer(0);
     action();
@@ -106,7 +180,25 @@ async function task(action = () => { }) {
 function timer(ms) { return new Promise(res => setTimeout(res, ms)); }
 
 function reset_game() {
-    game.random_start();
+    Utilities.load_json('assets/json/settings/settings.json', (response) => {
+        var data = null;
+        var success = true;
+
+        try {
+            data = JSON.parse(response);
+            console.log(data)
+        } catch (error) {
+            success = false;
+            createToast('There has been an error resetting the simulation', TOAST_TYPE.ERROR);
+        }
+
+        if (success) {
+            game.settings = data;
+            regenerate_range_sliders();
+            game.random_start();
+            toogle_pannel();
+        }
+    });
 }
 
 function show_save_confirmation() {
