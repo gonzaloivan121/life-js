@@ -1,7 +1,7 @@
 [
     {
         "color": "yellow",
-        "amount": 600,
+        "amount": 100,
         "range": 80,
         "rules": [
             {
@@ -16,7 +16,7 @@
     },
     {
         "color": "red",
-        "amount": 600,
+        "amount": 100,
         "range": 80,
         "rules": [
             {
@@ -31,7 +31,7 @@
     },
     {
         "color": "green",
-        "amount": 600,
+        "amount": 100,
         "range": 80,
         "rules": [
             {
@@ -50,13 +50,13 @@
     },
     {
         "color": "blue",
-        "amount": 600,
+        "amount": 100,
         "range": 80,
         "rules": []
     },
     {
         "color": "white",
-        "amount": 600,
+        "amount": 100,
         "range": 80,
         "rules": []
     }
