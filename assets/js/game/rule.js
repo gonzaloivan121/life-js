@@ -9,22 +9,16 @@ class Rule {
             for (let j = 0; j < particles2.length; j++) {
                 var b = particles2[j];
 
-                const delta = new Vector(
-                    a.position.x - b.position.x,
-                    a.position.y - b.position.y
-                );
+                const difference = Vector.subtract(a.position, b.position);
 
-                const distance = Math.sqrt(
-                    delta.x * delta.x +
-                    delta.y * delta.y
-                )
+                const magnitude = difference.magnitude();
 
-                if (distance > 0 && distance < range) {
-                    const F = gravity * 1 / distance;
+                if (magnitude > 0 && magnitude < range) {
+                    const F = gravity * 1 / magnitude;
 
                     const new_force = new Vector(
-                        F * delta.x,
-                        F * delta.y
+                        F * difference.x,
+                        F * difference.y
                     );
 
                     force.sum(new_force);
