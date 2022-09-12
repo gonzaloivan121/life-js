@@ -24,16 +24,27 @@ function createToast(message = null, type = 'info', duration = 3000) {
 
     const notif = document.createElement('div');
     const img = document.createElement('img');
+    //const close_button = document.createElement('span');
+
     img.src = "./assets/svg/toast/" + type + ".svg";
     img.height = "20";
     img.style.paddingRight = "1em";
 
+    
     notif.classList.add('toast');
     notif.classList.add(type);
-
-    notif.innerText = message;
+    notif.id = 'toast-' + toast_count;
     
+    notif.innerText = message;
+
+    /*close_button.classList.add('close-toast');
+    close_button.innerText = 'X';
+    close_button.onclick = () => {
+        closeToast(notif.id);
+    };
+    */
     notif.appendChild(img);
+    //notif.appendChild(close_button);
     toast.appendChild(notif);
 
     setTimeout(() => {
@@ -45,4 +56,17 @@ function createToast(message = null, type = 'info', duration = 3000) {
             toast_count--;
         }, 500);
     }, duration);
+}
+
+function closeToast(id) {
+    var toast_element = document.getElementById(id);
+    var id_number = parseInt(id.split('-')[1]);
+    
+    toast_element.style.opacity = 0;
+    toast_element.style.transform = "translateY(calc(100% * " + id_number + "))";
+
+    setTimeout(() => {
+        toast_element.remove();
+        toast_count--;
+    }, 500);
 }
