@@ -1,5 +1,8 @@
 class Particle {
     is_alive = true;
+    health = 100;
+    hunger = 0;
+    nutricious_value = 0;
     velocity = new Vector(0, 0);
 
     constructor(position, color, scale = 2) {
@@ -10,7 +13,36 @@ class Particle {
 
     update() {
         if (this.is_alive) {
+            //this.gain_hunger();
+            //this.lose_health();
             this.draw();
+        }
+    }
+
+    gain_hunger() {
+        this.hunger++;
+    }
+
+    lose_health() {
+        if (this.health > 0) {
+            this.health -= this.hunger * .001;
+            this.nutricious_value -= this.hunger / -this.health;
+        } else {
+            this.die();
+        }
+    }
+
+    /**
+     * 
+     * @param {Particle} particle 
+     */
+    eat(particle) {
+        if (this.is_alive) {
+            if (this.scale < 50) {
+                this.scale += .01;
+            }
+            this.health += particle.health;
+            this.hunger -= particle.nutricious_value;
         }
     }
 
