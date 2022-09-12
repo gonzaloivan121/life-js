@@ -15,6 +15,7 @@ class Particle {
         if (this.is_alive) {
             //this.gain_hunger();
             //this.lose_health();
+            this.check_eat();
             this.draw();
         }
     }
@@ -32,6 +33,26 @@ class Particle {
         }
     }
 
+    collides(particle) {
+        return this.position.x >= particle.position.x + this.scale &&
+               this.position.x < particle.position.x + this.scale &&
+               this.position.y >= particle.position.y + this.scale &&
+               this.position.y < particle.position.y + this.scale
+    }
+
+    check_eat() {
+        context.beginPath();
+        context.strokeStyle = this.color;
+        context.arc(
+            this.position.x,
+            this.position.y,
+            this.scale * 4,
+            0,
+            2 * Math.PI
+        );
+        context.stroke();
+    }
+
     /**
      * 
      * @param {Particle} particle 
@@ -47,13 +68,16 @@ class Particle {
     }
 
     draw() {
+        context.beginPath();
         context.fillStyle = this.color;
-        context.fillRect(
+        context.arc(
             this.position.x,
             this.position.y,
             this.scale,
-            this.scale
+            0,
+            2 * Math.PI
         );
+        context.fill();
     }
 
     die() {

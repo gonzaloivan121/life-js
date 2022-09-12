@@ -122,8 +122,8 @@ class Game {
 
     /**
      * 
-     * @param {Object} setting 
-     * @param {{amount: number, color: string}} data 
+     * @param {{color: string, amount: number, range: number, rules: [{color: string, value: number}]}} setting 
+     * @param {{color: string, amount: number}} data 
      */
     update_particle_amount(setting, data) {
         const amount = parseInt(data.amount);
@@ -156,17 +156,18 @@ class Game {
 
     /**
      * 
-     * @param {Object} setting 
-     * @param {{range: number, color: string}} data 
+     * @param {{color: string, amount: number, range: number, rules: [{color: string, value: number}]}} setting 
+     * @param {{color: string, range: number}} data 
      */
     update_particle_range(setting, data) {
+        console.log(data)
         const range = parseInt(data.range);
         setting.range = range;
     }
 
     /**
      * 
-     * @param {Object} setting 
+     * @param {{color: string, amount: number, range: number, rules: [{color: string, value: number}]}} setting 
      * @param {{color: string, rule_color: string, value: number}} data 
      */
     update_particle_attraction(setting, data) {
