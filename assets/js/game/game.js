@@ -247,11 +247,9 @@ class Game {
             setting.amount = random_amount;
             setting.range = random_range;
             setting.scale = random_scale;
-
-            //let has_rules = setting.rules.length > 0;
-            let will_have_rules = Utilities.random(0, 1) === 0; // 50% de probabilidades
-
             setting.rules = [];
+
+            let will_have_rules = Utilities.random(0, 1) === 0; // 50% de probabilidades
 
             if (will_have_rules) {
                 let random_rules = Utilities.random(0, this.colors.length);
@@ -269,16 +267,6 @@ class Game {
                     }
                 }
             }
-
-
-            
-
-            /*console.table({
-                random_amount,
-                random_range,
-                random_scale,
-                has_rules
-            })*/
         }
     }
 }
