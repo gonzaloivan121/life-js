@@ -1,70 +1,33 @@
 class Particle {
-    is_alive = true;
-    health = 100;
-    hunger = 0;
-    nutricious_value = 0;
     velocity = new Vector(0, 0);
 
-    constructor(position, color, scale = 2) {
+    constructor(position, color, scale = 3) {
         this.position = position;
         this.color = color;
         this.scale = scale;
     }
 
     update() {
-        if (this.is_alive) {
-            //this.gain_hunger();
-            //this.lose_health();
-            this.check_eat();
-            this.draw();
-        }
+        //this.test_direction();
+        this.draw();
     }
 
-    gain_hunger() {
-        this.hunger++;
+    test_direction() {
+        const direction = Raycast.fire(this.position, Vector.sum(this.position, this.velocity), 50);
+        this.draw_test_direction(Vector.lerp(this.position, direction, .1));
     }
 
-    lose_health() {
-        if (this.health > 0) {
-            this.health -= this.hunger * .001;
-            this.nutricious_value -= this.hunger / -this.health;
-        } else {
-            this.die();
-        }
-    }
-
-    collides(particle) {
-        return this.position.x >= particle.position.x + this.scale &&
-               this.position.x < particle.position.x + this.scale &&
-               this.position.y >= particle.position.y + this.scale &&
-               this.position.y < particle.position.y + this.scale
-    }
-
-    check_eat() {
+    draw_test_direction(direction) {
         context.beginPath();
         context.strokeStyle = this.color;
         context.arc(
-            this.position.x,
-            this.position.y,
-            this.scale * 4,
+            direction.x,
+            direction.y,
+            this.scale * 2,
             0,
             2 * Math.PI
         );
         context.stroke();
-    }
-
-    /**
-     * 
-     * @param {Particle} particle 
-     */
-    eat(particle) {
-        if (this.is_alive) {
-            if (this.scale < 50) {
-                this.scale += .01;
-            }
-            this.health += particle.health;
-            this.hunger -= particle.nutricious_value;
-        }
     }
 
     draw() {
@@ -78,10 +41,6 @@ class Particle {
             2 * Math.PI
         );
         context.fill();
-    }
-
-    die() {
-        this.is_alive = false;
     }
 
     move_to(x, y) {

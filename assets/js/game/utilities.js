@@ -14,6 +14,17 @@ class Utilities {
     }
 
     /**
+     * Generates a random float from a given minimum and maximum. Both included.
+     * 
+     * @param {Number} min - The minimum generated number
+     * @param {Number} max - The maximum generated number
+     * @returns {Number} The randomly generated integer
+     */
+    static random_float(min, max) {
+        return Math.random() * (max - min + 1) + min;
+    }
+
+    /**
      * Maps a number from a range to another given range
      * 
      * @param {Number} n - The number to be mapped
@@ -121,5 +132,9 @@ class Utilities {
     static capitalize(string) {
         string = string.toLocaleLowerCase();
         return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    static lerp(start, end, amt) {
+        return (1 - amt) * start + amt * end;
     }
 }

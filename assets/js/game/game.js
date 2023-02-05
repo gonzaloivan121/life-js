@@ -20,13 +20,13 @@ class Game {
     }
 
     random_start() {
-        this.particles.forEach(particle => {
+        for (const particle of this.particles) {
             const position = new Vector(
                 Utilities.random(50, canvas_width - 50),
                 Utilities.random(50, canvas_height - 50)
             );
             particle.position = position;
-        });
+        };
     }
 
     update_ticks(ticks) {
@@ -37,9 +37,9 @@ class Game {
     start_game(settings = null) {
         if (settings !== null) {
             this.settings = settings;
-            settings.forEach(setting => {
+            for (const setting of settings) {
                 this[setting.color] = this.create_particles(setting.amount, setting.color);
-            });
+            };
         }
 
         if (this.IntervalID === undefined) {
@@ -75,9 +75,9 @@ class Game {
             if (this.particles.length > 0) {
                 this.set_life_rules();
 
-                this.particles.forEach(particle => {
+                for (const particle of this.particles) {
                     particle.update();
-                });
+                };
             }
         }, time);
     }
@@ -92,16 +92,18 @@ class Game {
 
     set_life_rules() {
         if (this.settings.length > 0) {
-            this.settings.forEach(setting => {
-                setting.rules.forEach(rule => {
-                    Rule.set(this[setting.color], this[rule.color], rule.value, setting.range);
-                });
-            });
+            for (const setting of this.settings) {
+                if (setting.rules.length > 0) {
+                    for (const rule of setting.rules) {
+                        Rule.set(this[setting.color], this[rule.color], rule.value, setting.range);
+                    };
+                }
+            };
         }
     }
 
     update_settings(data, type) {
-        this.settings.forEach(setting => {
+        for (const setting of this.settings) {
             if (setting.color === data.color) {
                 switch (type) {
                     case 'amount':
@@ -113,31 +115,35 @@ class Game {
                     case 'attraction':
                         this.update_particle_attraction(setting, data);
                         break;
+                    case 'scale':
+                        this.update_particle_scale(setting, data);
+                        break;
                     default:
                         return;
                 }
             }
-        });
+        };
     }
 
     /**
      * 
-     * @param {{color: string, amount: number, range: number, rules: [{color: string, value: number}]}} setting 
+     * @param {{color: string, amount: number, range: number, scale: number, rules: [{color: string, value: number}]}} setting 
      * @param {{color: string, amount: number}} data 
      */
     update_particle_amount(setting, data) {
-        const amount = parseInt(data.amount);
         const color = setting.color;
-        const color_difference = this[color].length - amount;
-
+        const current_amount = this[color].length;
+        const new_amount = parseInt(data.amount);
+        const color_difference = current_amount - new_amount;
+        
         if (color_difference > 0) {
-            // Remove particles
+            // Si el nuevo valor es inferior al actual
             this[color].splice(0, color_difference);
 
-            var count = 0;
+            let count = 0;
 
             for (let i = 0; i < this.particles.length; i++) {
-                var particle = this.particles[i];
+                const particle = this.particles[i];
                 if (particle.color === color) {
                     this.particles.splice(i, 1);
 
@@ -149,34 +155,48 @@ class Game {
                 }
             }
         } else {
-            // Add particles
-            //this[color] = this.create_particles(-color_difference, color);
+            const new_particles = this.create_particles(-color_difference, color);
+            for (const particle of new_particles) {
+                this[color].push(particle);
+            };
         }
     }
 
     /**
      * 
-     * @param {{color: string, amount: number, range: number, rules: [{color: string, value: number}]}} setting 
+     * @param {{color: string, amount: number, range: number, scale: number, rules: [{color: string, value: number}]}} setting 
      * @param {{color: string, range: number}} data 
      */
     update_particle_range(setting, data) {
-        console.log(data)
         const range = parseInt(data.range);
         setting.range = range;
     }
 
     /**
      * 
-     * @param {{color: string, amount: number, range: number, rules: [{color: string, value: number}]}} setting 
+     * @param {{color: string, amount: number, range: number, scale: number, rules: [{color: string, value: number}]}} setting 
      * @param {{color: string, rule_color: string, value: number}} data 
      */
     update_particle_attraction(setting, data) {
         const attraction = parseFloat(data.value);
-        setting.rules.forEach(rule => {
+        for (const rule of setting.rules) {
             if (rule.color === data.rule_color) {
                 rule.value = attraction;
             }
-        });
+        };
+    }
+
+    /**
+     * 
+     * @param {{color: string, amount: number, range: number, scale: number, rules: [{color: string, value: number}]}} setting 
+     * @param {{color: string, scale: number}} data 
+     */
+    update_particle_scale(setting, data) {
+        const scale = parseFloat(data.scale);
+        setting.scale = scale;
+        for (const particle of this[setting.color]) {
+            particle.scale = scale;
+        };
     }
 
     load_all_settings(data = null) {
@@ -186,21 +206,21 @@ class Game {
         this.particles = [];
         var colors = [];
 
-        data.particles.forEach(particle => {
+        for (const particle of data.particles) {
             this.particles.push(Particle.create_from(particle));
             if (!colors.includes(particle.color)) {
                 colors.push(particle.color);
             }
-        });
+        };
 
-        colors.forEach(color => {
+        for (const color of colors) {
             this[color] = [];
-            this.particles.forEach(particle => {
+            for (const particle of this.particles) {
                 if (particle.color === color) {
                     this[color].push(particle);
                 }
-            });
-        });
+            };
+        };
 
         return true;
     }
@@ -210,11 +230,55 @@ class Game {
             color: rule_color,
             value: 0
         };
-        this.settings.forEach((setting) => {
+        for (const setting of this.settings) {
             if (setting.color === color) {
                 setting.rules.push(new_rule);
             }
-        });
+        };
         return new_rule;
+    }
+
+    randomize_settings() {
+        for (const setting of this.settings) {
+            let random_amount = Utilities.random(0, 1000);
+            let random_range = Utilities.random(0, 500);
+            let random_scale = Utilities.random(1, 10);
+
+            setting.amount = random_amount;
+            setting.range = random_range;
+            setting.scale = random_scale;
+
+            //let has_rules = setting.rules.length > 0;
+            let will_have_rules = Utilities.random(0, 1) === 0; // 50% de probabilidades
+
+            setting.rules = [];
+
+            if (will_have_rules) {
+                let random_rules = Utilities.random(0, this.colors.length);
+                let random_colors = [];
+
+                for (let i = 0; i < random_rules; i++) {
+                    let random_color = this.colors[Utilities.random(0, this.colors.length)];
+                    if (!random_colors.includes(random_color)) {
+                        let random_attraction = parseFloat(Utilities.random_float(-1, 1).toFixed(2));
+                        setting.rules.push({
+                            color: random_color,
+                            value: random_attraction
+                        });
+                        random_colors.push(random_color);
+                    }
+                }
+            }
+
+
+            
+
+            /*console.table({
+                random_amount,
+                random_range,
+                random_scale,
+                has_rules
+            })*/
+        }
     }
 }

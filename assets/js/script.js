@@ -59,7 +59,7 @@ function generate_info_modal(info = null) {
 
     info_description_element.innerText = info.description;
 
-    info.socials.forEach(social => {
+    for (const social of info.socials) {
         const button = document.createElement('button');
         const img = document.createElement('img');
 
@@ -88,7 +88,7 @@ function generate_info_modal(info = null) {
         button.prepend(img);
 
         info_buttons_element.appendChild(button);
-    });
+    };
 }
 
 canvas.onmousemove = function (e) {
@@ -219,9 +219,9 @@ function show_save_confirmation() {
     
 function save_settings() {
     var colors = [];
-    game.settings.forEach(setting => {
+    for (const setting of game.settings) {
         colors.push(setting.color);
-    });
+    };
 
     var data = {
         settings: game.settings,
@@ -280,30 +280,31 @@ function create_range_sliders(settings = null) {
 
     var life_settings_container = document.getElementById("life-settings");
 
-    settings.forEach(setting => {
+    for (const setting of settings) {
         var setting_template =
         '<div class="setting" id="' + setting.color + '-setting">' +
             '<span class="setting-name">' + setting.color + '</span>';
 
             setting_template += create_amount_range_template(setting.color, setting.amount);
             setting_template += create_attraction_range_template(setting.color, setting.range);
-                
-        setting.rules.forEach(rule => {
-            setting_template += create_rule_range_template(setting.color, rule);
-        });
+            setting_template += create_scale_range_template(setting.color, setting.scale);
 
-        setting_template += create_add_rule_button(setting.color);  
+            for (const rule of setting.rules) {
+                setting_template += create_rule_range_template(setting.color, rule);
+            };
+
+            setting_template += create_add_rule_button(setting.color);  
         setting_template += '</div>';
 
         life_settings_container.insertAdjacentHTML('beforeend', setting_template);
-    });
+    };
 }
 
 function create_attraction_range_template(color, range) {
     return '<div class="range-container tooltip">' +
         '<span class="range-value">' + range + '</span>' +
         '<span class="tooltip-text">Range of attraction for <strong style="color: ' + color + ';">' + color + '</strong> particles</span>' +
-        '<input type="range" data-color="' + color + '" data-range="' + range + '" class="range" value="' + range + '" min="0" max="100" step="1" oninput="update_range(this, this.value, \'range\')"></input>' +
+        '<input type="range" data-color="' + color + '" data-range="' + range + '" class="range" value="' + range + '" min="0" max="500" step="1" oninput="update_range(this, this.value, \'range\')"></input>' +
     '</div>';
 }
 
@@ -320,6 +321,14 @@ function create_rule_range_template(color, rule) {
         '<span class="range-value">' + rule.value + '</span>' +
         '<span class="tooltip-text">How much <strong style="color: ' + color + ';">' + color + '</strong> particles attract to <strong style="color: ' + rule.color + ';">' + rule.color + '</strong> particles</span>' +
         '<input type="range" data-color="' + color + '" data-rule_color="' + rule.color + '" data-value="' + rule.value + '" class="range" value="' + rule.value + '" min="-1" max="1" step="0.01" oninput="update_range(this, this.value, \'attraction\')"></input>' +
+    '</div>';
+}
+
+function create_scale_range_template(color, scale) {
+    return '<div class="range-container tooltip">' +
+        '<span class="range-value">' + scale + '</span>' +
+        '<span class="tooltip-text">How big <strong style="color: ' + color + ';">' + color + '</strong> particles are</span>' +
+        '<input type="range" data-color="' + color + '" data-scale="' + scale + '" class="range" value="' + scale + '" min="1" max="10" step="0.01" oninput="update_range(this, this.value, \'scale\')"></input>' +
     '</div>';
 }
 
@@ -346,6 +355,10 @@ function update_range(range_element, value, type) {
         dataset.range = value;
     }
 
+    if (dataset.scale) {
+        dataset.scale = value;
+    }
+
     game.update_settings(dataset, type);
 }
 
@@ -360,19 +373,19 @@ function add_select_rule(color) {
     
     var added_colors = [];
 
-    game.settings.forEach(setting => {
+    for (const setting of game.settings) {
         if (setting.color === color) {
-            setting.rules.forEach(rule => {
+            for (const rule of setting.rules) {
                 added_colors.push(rule.color);
-            });
+            };
         }
-    });
+    };
 
-    game.colors.forEach((game_color) => {
+    for (const game_color of game.colors) {
         if (!added_colors.includes(game_color)) {
             select_template += '<option value="' + game_color + '">' + Utilities.capitalize(game_color) + '</option>';
         }
-    });
+    };
 
     select_template += '<option value="">Cancel</option>';
 
@@ -404,13 +417,13 @@ function add_rule(color, rule_color) {
 
     var added_colors = [];
 
-    game.settings.forEach(setting => {
+    for (const setting of game.settings) {
         if (setting.color === color) {
-            setting.rules.forEach(rule => {
+            for (const rule of setting.rules) {
                 added_colors.push(rule.color);
-            });
+            };
         }
-    });
+    };
 
     color_setting.insertAdjacentHTML('beforeend', create_rule_range_template(color, new_rule));
 
@@ -442,4 +455,8 @@ function toogle_pannel() {
     } else {
         pannel.classList.add("active");
     }
+}
+
+function randomize_settings() {
+    game.randomize_settings();
 }
